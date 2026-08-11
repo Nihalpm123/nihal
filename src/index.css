@@ -1,0 +1,335 @@
+:root {
+  /* Colors */
+  --bg-primary: #FAF9F6;      /* Premium Warm White (Alabaster) */
+  --bg-secondary: #F4F3EF;    /* Soft Warm Off-White */
+  --text-primary: #121212;    /* Dark Charcoal */
+  --text-secondary: #5A5A57;  /* Muted Grey-Charcoal */
+  --border-color: #E2E1DD;    /* Subtle Warm Grey Border */
+  
+  /* Fonts */
+  --font-heading: 'Syne', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+
+  /* Subtle Creative Gradients */
+  --grad-lavender: linear-gradient(135deg, #F3E5F5 0%, #E8EAF6 100%);
+  --grad-pale-blue: linear-gradient(135deg, #E0F2F1 0%, #E1F5FE 100%);
+  --grad-soft-pink: linear-gradient(135deg, #FFF0F5 0%, #FFE4E1 100%);
+  --grad-warm-peach: linear-gradient(135deg, #FFF8E7 0%, #FFF3E0 100%);
+  
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* Hide default cursor on desktop device when custom cursor is active */
+@media (hover: hover) and (pointer: fine) {
+  body {
+    cursor: none;
+  }
+  a, button, [role="button"], .clickable {
+    cursor: none !important;
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Typography and Editorial Layouts */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  color: var(--text-primary);
+}
+
+p {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Custom Cursor styling */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background-color: var(--text-primary);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, background-color 0.3s;
+}
+
+.custom-cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--text-primary);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s, border-color 0.3s;
+}
+
+/* Layout Utilities */
+.portfolio-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 4rem;
+}
+
+@media (max-width: 1024px) {
+  .portfolio-container {
+    padding: 0 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .portfolio-container {
+    padding: 0 1.5rem;
+  }
+}
+
+/* Premium Layout Composition Utilities */
+.asymmetrical-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 4rem;
+}
+
+@media (max-width: 900px) {
+  .asymmetrical-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.split-section {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid var(--border-color);
+  padding: 4rem 0;
+}
+
+@media (max-width: 768px) {
+  .split-section {
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2.5rem 0;
+  }
+}
+
+.section-label {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* Button & interactive states */
+.btn-editorial {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  border-bottom: 2px solid var(--text-primary);
+  padding-bottom: 0.5rem;
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.btn-editorial:hover {
+  transform: translateX(5px);
+}
+
+.btn-editorial svg {
+  transition: transform 0.3s;
+}
+
+.btn-editorial:hover svg {
+  transform: translateX(5px);
+}
+
+/* Step 2 Additions */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Creative Marquee Transition */
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  display: flex;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.5rem 0;
+  background-color: var(--bg-primary);
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  box-sizing: border-box;
+}
+
+.marquee-content {
+  display: inline-flex;
+  animation: marquee-scroll 30s linear infinite;
+  gap: 3rem;
+  padding-right: 3rem;
+}
+
+.marquee-item {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3.5vw, 3rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.marquee-separator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--text-secondary);
+  opacity: 0.3;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+/* Fine architectural lines & decorative grids */
+.fine-line {
+  position: absolute;
+  background-color: var(--border-color);
+  z-index: 0;
+  opacity: 0.7;
+}
+
+.fine-line-vert {
+  width: 1px;
+  height: 100%;
+}
+
+.fine-line-horiz {
+  height: 1px;
+  width: 100%;
+}
+
+/* Creative text-mask reveal wrapper */
+.reveal-text-mask {
+  overflow: hidden;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+/* Large decorative text watermark */
+.watermark-text {
+  font-family: var(--font-heading);
+  font-size: clamp(5rem, 15vw, 12rem);
+  font-weight: 800;
+  color: var(--border-color);
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 0;
+  line-height: 0.8;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+
+/* Step 5 Additions: Keyboard focus, accessibility and mobile polish */
+a:focus-visible, 
+button:focus-visible, 
+input:focus-visible, 
+textarea:focus-visible {
+  outline: 2px solid var(--text-primary) !important;
+  outline-offset: 4px !important;
+}
+
+@media (max-width: 768px) {
+  .fine-line-vert {
+    display: none !important;
+  }
+  
+  .watermark-text {
+    font-size: clamp(4rem, 12vw, 8rem) !important;
+    top: -20% !important;
+  }
+
+  p {
+    font-size: 0.95rem !important;
+  }
+
+  /* Increase mobile touch targets */
+  button, 
+  a, 
+  input[type="submit"] {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+
