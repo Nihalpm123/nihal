@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowUpRight } from 'lucide-react';
+import GithubIcon from './GithubIcon';
+import { socialLinks } from '../data/socialLinks';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,9 +15,9 @@ export default function Navigation() {
   // Navigation Items
   const navItems = [
     { name: 'Home', target: 'hero' },
-    { name: 'About', target: 'about' },
     { name: 'Work', target: 'work' },
     { name: 'Experience', target: 'experience' },
+    { name: 'About & Skills', target: 'about' },
     { name: 'Contact', target: 'contact' }
   ];
 
@@ -55,8 +57,8 @@ export default function Navigation() {
           right: 0,
           height: '80px',
           zIndex: 1000,
-          backgroundColor: isScrolled ? 'rgba(250, 249, 246, 0.85)' : 'rgba(250, 249, 246, 0)',
-          backdropFilter: isScrolled ? 'blur(12px)' : 'blur(0px)',
+          backgroundColor: isScrolled ? 'rgba(250, 249, 246, 0.92)' : 'rgba(250, 249, 246, 0)',
+          backdropFilter: isScrolled ? 'blur(14px)' : 'blur(0px)',
           borderBottom: isScrolled ? '1px solid var(--border-color)' : '1px solid transparent',
           display: 'flex',
           alignItems: 'center',
@@ -76,7 +78,7 @@ export default function Navigation() {
             letterSpacing: '-0.03em',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.5rem'
+            gap: '0.6rem'
           }}
         >
           <motion.span
@@ -87,18 +89,19 @@ export default function Navigation() {
           </motion.span>
           <span 
             style={{
-              fontSize: '0.6rem',
+              fontSize: '0.62rem',
               fontFamily: 'var(--font-body)',
-              fontWeight: 700,
-              letterSpacing: '0.12em',
+              fontWeight: 800,
+              letterSpacing: '0.1em',
               color: 'var(--text-secondary)',
               border: '1px solid var(--border-color)',
-              padding: '1px 5px',
-              borderRadius: '1px',
+              backgroundColor: 'var(--bg-secondary)',
+              padding: '2px 7px',
+              borderRadius: '2px',
               textTransform: 'uppercase'
             }}
           >
-            Visual Art
+            MERN & DESIGN
           </span>
         </Link>
 
@@ -147,8 +150,30 @@ export default function Navigation() {
           ))}
         </div>
 
-        {/* Right Side: Let's Talk CTA */}
-        <div className="desktop-cta" style={{ display: 'flex', alignItems: 'center' }}>
+        {/* Right Side: GitHub + Let's Talk CTA */}
+        <div className="desktop-cta" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <a
+            href={socialLinks.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="clickable"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '38px',
+              height: '38px',
+              borderRadius: '50%',
+              border: '1px solid var(--border-color)',
+              color: 'var(--text-primary)',
+              transition: 'background-color 0.2s, border-color 0.2s',
+            }}
+            title="GitHub Profile"
+            aria-label="GitHub Profile"
+          >
+            <GithubIcon size={18} />
+          </a>
+
           <button
             onClick={() => handleNavClick('contact')}
             style={{
@@ -208,7 +233,7 @@ export default function Navigation() {
               flexDirection: 'column',
               justifyContent: 'center',
               alignItems: 'center',
-              gap: '2rem',
+              gap: '1.75rem',
               padding: '2rem'
             }}
           >
@@ -223,7 +248,7 @@ export default function Navigation() {
                   background: 'none',
                   border: 'none',
                   fontFamily: 'var(--font-heading)',
-                  fontSize: '2rem',
+                  fontSize: '1.8rem',
                   fontWeight: 800,
                   letterSpacing: '-0.04em',
                   textTransform: 'uppercase',
@@ -233,26 +258,48 @@ export default function Navigation() {
                 {item.name}
               </motion.button>
             ))}
-            <motion.button
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: navItems.length * 0.08 }}
-              onClick={() => handleNavClick('contact')}
-              style={{
-                background: 'var(--text-primary)',
-                border: 'none',
-                borderRadius: '30px',
-                padding: '12px 28px',
-                fontFamily: 'var(--font-heading)',
-                fontSize: '1.25rem',
-                fontWeight: 800,
-                color: 'var(--bg-primary)',
-                marginTop: '1rem',
-                textTransform: 'uppercase'
-              }}
-            >
-              Let's Talk
-            </motion.button>
+
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+              <a
+                href={socialLinks.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '10px 20px',
+                  borderRadius: '30px',
+                  border: '1px solid var(--border-color)',
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: 700,
+                  fontSize: '0.9rem',
+                  textTransform: 'uppercase',
+                  color: 'var(--text-primary)'
+                }}
+              >
+                <GithubIcon size={18} /> GitHub
+              </a>
+
+              <motion.button
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                onClick={() => handleNavClick('contact')}
+                style={{
+                  background: 'var(--text-primary)',
+                  border: 'none',
+                  borderRadius: '30px',
+                  padding: '10px 24px',
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '1rem',
+                  fontWeight: 800,
+                  color: 'var(--bg-primary)',
+                  textTransform: 'uppercase'
+                }}
+              >
+                Let's Talk
+              </motion.button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

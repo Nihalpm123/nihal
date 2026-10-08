@@ -1,7 +1,23 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { ArrowUpRight, Mail, Phone, MapPin, Award, BookOpen, Send, Check } from 'lucide-react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import { 
+  ArrowUpRight, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Award, 
+  BookOpen, 
+  Send, 
+  Check, 
+  Code, 
+  Terminal, 
+  Palette, 
+  Sparkles, 
+  CheckCircle2,
+  ExternalLink
+} from 'lucide-react';
+import GithubIcon from '../components/GithubIcon';
 import { personalInfo, projects } from '../data/portfolioData';
 import { socialLinks } from '../data/socialLinks';
 
@@ -9,9 +25,15 @@ export default function Home() {
   // Contact Form States
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [projectType, setProjectType] = useState('Branding');
+  const [projectType, setProjectType] = useState('MERN Stack Project');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+
+  // Project Filtering State: 'all' | 'code' | 'design'
+  const [activeFilter, setActiveFilter] = useState('all');
+
+  // Interactive Code Snippet Tab: 'api' | 'component'
+  const [activeCodeTab, setActiveCodeTab] = useState('api');
 
   // Setup Scroll-Linked Parallax Animations
   const { scrollY } = useScroll();
@@ -19,12 +41,18 @@ export default function Home() {
   const imageParallaxY = useTransform(scrollY, [0, 600], [0, 40]);
   const lineParallaxX = useTransform(scrollY, [0, 600], [0, -50]);
 
-  // Dynamic helper to match cover aspect ratio to original image dimensions
+  // Aspect ratio helper
   const getProjectRatio = (id) => {
     if (id === 'logo-design') return '2/1';
-    if (id === 'commercial-branding') return '16/9';
-    return '3/2'; // Default ratio for general campaign JPEGs
+    if (id === 'commercial-branding' || id === 'nampy-research-lab' || id === 'le-cygnex-agency' || id === 'digimpc-technologies' || id === 'salafi-library-karimbil' || id === 'mpc-document-service') return '16/9';
+    return '3/2';
   };
+
+  // Filter projects
+  const filteredProjects = projects.filter((project) => {
+    if (activeFilter === 'all') return true;
+    return project.type === activeFilter;
+  });
 
   // Framer Motion Animation Variants
   const headingContainerVariants = {
@@ -74,11 +102,6 @@ export default function Home() {
     }
   };
 
-  const projectItemVariants = {
-    initial: {},
-    hover: {}
-  };
-
   const titleHoverVariants = {
     initial: { x: 0 },
     hover: { x: 12, transition: { duration: 0.3, ease: "easeOut" } }
@@ -94,11 +117,10 @@ export default function Home() {
     hover: { opacity: 0.55, scale: 1.01, transition: { duration: 0.4 } }
   };
 
-  // Interactive Skill Animation Variants
   const skillItemVariants = {
     initial: { scale: 1, backgroundColor: '#FAF9F6', borderColor: '#E2E1DD', color: '#121212' },
     hover: { 
-      scale: 1.05, 
+      scale: 1.04, 
       backgroundColor: '#121212', 
       borderColor: '#121212',
       color: '#FAF9F6', 
@@ -106,27 +128,39 @@ export default function Home() {
     }
   };
 
-  const projectTypes = ['Branding', 'UI Design', 'Social Media', 'Layout Composition'];
+  const projectTypes = [
+    'MERN Stack Project', 
+    'Full-Stack Web App', 
+    'React Frontend', 
+    'Brand Identity & Logo', 
+    'Graphic Design & Ads'
+  ];
 
   // Handle Form mailto redirect fallback submission
   const handleContactSubmit = (e) => {
     e.preventDefault();
     if (!name || !email || !message) return;
 
-    const emailSubject = `Design Inquiry: ${projectType} - from ${name}`;
-    const emailBody = `Hi Nihal,\n\nMy name is ${name} (${email}).\n\nI would like to collaborate with you on a ${projectType} project.\n\nProject Brief:\n${message}\n\nBest regards,\n${name}`;
+    const emailSubject = `Inquiry: ${projectType} - from ${name}`;
+    const emailBody = `Hi Nihal,\n\nMy name is ${name} (${email}).\n\nI would like to collaborate on a ${projectType}.\n\nProject Requirements:\n${message}\n\nBest regards,\n${name}`;
     
-    // Redirect to mailto URL
     window.location.href = `mailto:${personalInfo.email}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
     
     setSubmitted(true);
-    // Reset fields after delay
     setTimeout(() => {
       setName('');
       setEmail('');
       setMessage('');
       setSubmitted(false);
     }, 3000);
+  };
+
+  const scrollToSectionWithFilter = (filterType) => {
+    setActiveFilter(filterType);
+    const element = document.getElementById('work');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   return (
@@ -150,30 +184,51 @@ export default function Home() {
         }}
       >
         {/* Architectural Fine Grid Lines */}
-        <div className="fine-line fine-line-vert" style={{ left: '15%', top: 0 }} />
+        <div className="fine-line fine-line-vert" style={{ left: '12%', top: 0 }} />
         <motion.div 
           className="fine-line fine-line-vert" 
           style={{ right: '35%', top: 0, x: lineParallaxX }} 
         />
-        <div className="fine-line fine-line-horiz" style={{ top: '30%', left: 0 }} />
-        <div className="fine-line fine-line-horiz" style={{ bottom: '20%', left: 0 }} />
+        <div className="fine-line fine-line-horiz" style={{ top: '28%', left: 0 }} />
+        <div className="fine-line fine-line-horiz" style={{ bottom: '18%', left: 0 }} />
 
         <div className="portfolio-container" style={{ width: '100%', position: 'relative', zIndex: 1 }}>
-          <div className="asymmetrical-grid" style={{ alignItems: 'center', gap: '3rem' }}>
+          <div className="asymmetrical-grid" style={{ alignItems: 'center', gap: '3.5rem' }}>
             
             {/* Left Column: Typographic Exhibition */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem', position: 'relative', zIndex: 2 }}>
+              
               {/* Top Meta Label */}
               <div style={{ overflow: 'hidden' }}>
                 <motion.div 
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: 0.1 }}
-                  style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}
+                  style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}
                 >
-                  <span className="section-label" style={{ letterSpacing: '0.2em' }}>portfolio exhibition v2.0</span>
+                  <span className="section-label" style={{ letterSpacing: '0.15em', color: 'var(--text-primary)', fontWeight: 700 }}>
+                    MERN DEVELOPER &amp; DESIGNER
+                  </span>
                   <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--text-secondary)' }} />
-                  <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Malappuram, Kakkad</span>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                    Malappuram, Kerala
+                  </span>
+                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--text-secondary)' }} />
+                  <span style={{ 
+                    fontSize: '0.7rem', 
+                    fontWeight: 700, 
+                    backgroundColor: 'var(--bg-secondary)', 
+                    padding: '2px 8px', 
+                    borderRadius: '2px',
+                    border: '1px solid var(--border-color)',
+                    color: '#2E7D32',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}>
+                    <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#4CAF50' }} />
+                    Available for Work
+                  </span>
                 </motion.div>
               </div>
 
@@ -181,52 +236,138 @@ export default function Home() {
               <motion.h1
                 variants={headingContainerVariants}
                 style={{
-                  fontSize: 'clamp(2.8rem, 6.5vw, 6rem)',
-                  lineHeight: 0.95,
+                  fontSize: 'clamp(2.4rem, 5.5vw, 5.2rem)',
+                  lineHeight: 0.96,
                   textTransform: 'uppercase',
                   letterSpacing: '-0.05em',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '0.25rem',
+                  gap: '0.35rem',
                   fontFamily: 'var(--font-heading)'
                 }}
               >
                 <div className="reveal-text-mask">
-                  <motion.span variants={lineVariants} style={{ display: 'block' }}>Creative</motion.span>
+                  <motion.span variants={lineVariants} style={{ display: 'block' }}>
+                    MERN Developer
+                  </motion.span>
                 </div>
                 <div className="reveal-text-mask" style={{ color: 'var(--text-secondary)' }}>
-                  <motion.span variants={lineVariants} style={{ display: 'block', fontStyle: 'italic', fontWeight: 300 }}>Graphic</motion.span>
+                  <motion.span variants={lineVariants} style={{ display: 'block', fontStyle: 'italic', fontWeight: 300 }}>
+                    &amp; Creative
+                  </motion.span>
                 </div>
                 <div className="reveal-text-mask">
-                  <motion.span variants={lineVariants} style={{ display: 'block' }}>Designer</motion.span>
+                  <motion.span variants={lineVariants} style={{ display: 'block' }}>
+                    Designer
+                  </motion.span>
                 </div>
               </motion.h1>
 
-              {/* Supporting Statement based directly on CV */}
-              <motion.div variants={fadeUpVariants} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {/* Supporting Statement based directly on dual profile */}
+              <motion.div variants={fadeUpVariants} style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
                 <p 
                   style={{
-                    fontSize: '1.15rem',
+                    fontSize: '1.12rem',
                     lineHeight: 1.7,
-                    maxWidth: '480px',
+                    maxWidth: '520px',
                     color: 'var(--text-secondary)'
                   }}
                 >
-                  Specializing in visual content, layout composition, branding, and social media design. Bringing hands-on design experience across digital marketing, e-commerce, real estate, and sports brands.
+                  Architecting full-stack web applications with <strong style={{ color: 'var(--text-primary)' }}>MongoDB, Express, React, and Node.js</strong>, coupled with precision <strong style={{ color: 'var(--text-primary)' }}>graphic design, brand identity, and UI/UX systems</strong>. Bridging high-performance code with memorable visual artistry.
                 </p>
 
                 {/* Subtext Fine Line Separator */}
                 <div style={{ width: '80px', height: '1px', backgroundColor: 'var(--text-primary)' }} />
                 
-                <div style={{ display: 'flex', gap: '3rem' }}>
+                {/* Dual Competency Snapshot */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', maxWidth: '500px' }}>
                   <div>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>core competencies</span>
-                    <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.2rem' }}>Identity, Compositions, Marketing UI</p>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Terminal size={12} /> Full-Stack Engineering
+                    </span>
+                    <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.2rem' }}>
+                      React, Node, Express, MongoDB, REST APIs, Redux
+                    </p>
                   </div>
                   <div>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>availability</span>
-                    <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.2rem' }}>Independent Projects</p>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Palette size={12} /> Visual Brand Artistry
+                    </span>
+                    <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)', marginTop: '0.2rem' }}>
+                      Photoshop, Illustrator, Figma, Brand Identity, UI
+                    </p>
                   </div>
+                </div>
+
+                {/* Direct Action Buttons */}
+                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginTop: '0.5rem' }}>
+                  <button 
+                    onClick={() => scrollToSectionWithFilter('code')}
+                    className="clickable"
+                    style={{
+                      backgroundColor: 'var(--text-primary)',
+                      color: 'var(--bg-primary)',
+                      border: 'none',
+                      padding: '12px 22px',
+                      borderRadius: '2px',
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 800,
+                      fontSize: '0.85rem',
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      cursor: 'none'
+                    }}
+                  >
+                    <Code size={16} /> MERN Projects
+                  </button>
+
+                  <button 
+                    onClick={() => scrollToSectionWithFilter('design')}
+                    className="clickable"
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      color: 'var(--text-primary)',
+                      border: '1px solid var(--border-color)',
+                      padding: '12px 22px',
+                      borderRadius: '2px',
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 800,
+                      fontSize: '0.85rem',
+                      letterSpacing: '0.04em',
+                      textTransform: 'uppercase',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      cursor: 'none'
+                    }}
+                  >
+                    <Palette size={16} /> Design Work
+                  </button>
+
+                  <a 
+                    href={socialLinks.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="clickable"
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: 'var(--text-primary)',
+                      border: '1px solid var(--border-color)',
+                      padding: '12px 18px',
+                      borderRadius: '2px',
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 700,
+                      fontSize: '0.85rem',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <GithubIcon size={16} /> GitHub
+                  </a>
                 </div>
               </motion.div>
 
@@ -241,7 +382,7 @@ export default function Home() {
                   zIndex: -1
                 }}
               >
-                Nampy
+                MERN
               </motion.div>
             </div>
 
@@ -264,64 +405,68 @@ export default function Home() {
                 }}
               />
 
-              {/* Asymmetric Metadata Tag Layer */}
+              {/* Asymmetric Metadata Tag Layer: Tech stack badge */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 1 }}
                 style={{
                   position: 'absolute',
-                  right: '-10%',
-                  top: '15%',
+                  right: '-8%',
+                  top: '12%',
                   backgroundColor: 'var(--bg-primary)',
                   border: '1px solid var(--border-color)',
-                  padding: '10px 18px',
+                  padding: '12px 18px',
                   borderRadius: '2px',
                   zIndex: 3,
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.02)',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.04)',
                   fontFamily: 'var(--font-body)'
                 }}
               >
-                <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', display: 'block' }}>
-                  Visual Coordinates
-                </span>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
-                  11.0722° N, 76.0740° E
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <Code size={14} style={{ color: '#00ED64' }} />
+                  <span style={{ fontSize: '0.65rem', fontWeight: 800, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>
+                    Core Stack
+                  </span>
+                </div>
+                <span style={{ fontSize: '0.9rem', fontWeight: 800, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)', display: 'block', marginTop: '2px' }}>
+                  M • E • R • N
                 </span>
               </motion.div>
 
-              {/* Secondary metadata tag under image */}
+              {/* Secondary metadata tag under image: Creative badge */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 1.1 }}
                 style={{
                   position: 'absolute',
-                  left: '-5%',
-                  bottom: '10%',
+                  left: '-8%',
+                  bottom: '8%',
                   backgroundColor: 'var(--bg-primary)',
                   border: '1px solid var(--border-color)',
-                  padding: '8px 14px',
+                  padding: '10px 16px',
                   borderRadius: '2px',
                   zIndex: 3,
                   fontSize: '0.75rem',
-                  fontWeight: 600,
+                  fontWeight: 700,
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '8px'
+                  gap: '8px',
+                  boxShadow: '0 10px 30px rgba(0,0,0,0.04)'
                 }}
               >
-                <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#4CAF50', animation: 'pulse 2s infinite' }} />
-                <span>Fact-Checked Portfolio</span>
+                <Palette size={14} style={{ color: '#FF7A00' }} />
+                <span>Graphic &amp; UI Artist</span>
               </motion.div>
 
-              {/* Main Portrait Frame - adjusted to 1:1 ratio to prevent cropping Nihal's face */}
+              {/* Main Portrait Frame - 1:1 square ratio */}
               <motion.div 
                 variants={imageRevealVariants}
                 style={{
                   width: '100%',
                   maxWidth: '380px',
-                  aspectRatio: '1/1', // Adjusted to 1/1 square for hero portrait
+                  aspectRatio: '1/1',
                   overflow: 'hidden',
                   borderRadius: '4px',
                   border: '1px solid var(--border-color)',
@@ -333,12 +478,12 @@ export default function Home() {
               >
                 <img 
                   src={personalInfo.portraitImage} 
-                  alt="Nihal PM Professional Portrait"
+                  alt="Nihal PM — MERN Developer & Graphic Designer"
                   style={{
                     width: '100%',
                     height: '100%',
                     objectFit: 'cover',
-                    objectPosition: 'center center' // Centered vertically and horizontally
+                    objectPosition: 'center center'
                   }}
                 />
               </motion.div>
@@ -348,21 +493,31 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= CREATIVE SCROLLING MARQUEE ================= */}
+      {/* ================= DUAL-DISCIPLINE SCROLLING MARQUEE ================= */}
       <section className="marquee-container" style={{ zIndex: 5 }}>
         <div className="marquee-content">
           {[...Array(4)].map((_, i) => (
             <React.Fragment key={i}>
               <div className="marquee-item">
+                <span>MERN Stack</span>
+                <span className="marquee-separator" />
+                <span>React.js</span>
+                <span className="marquee-separator" />
                 <span>Graphic Design</span>
                 <span className="marquee-separator" />
-                <span>Branding</span>
+                <span>Node.js &amp; Express</span>
                 <span className="marquee-separator" />
-                <span>UI Design</span>
+                <span>Brand Identity</span>
                 <span className="marquee-separator" />
-                <span>Social Media</span>
+                <span>MongoDB</span>
                 <span className="marquee-separator" />
-                <span>Visual Communication</span>
+                <span>Adobe Photoshop</span>
+                <span className="marquee-separator" />
+                <span>REST APIs</span>
+                <span className="marquee-separator" />
+                <span>Adobe Illustrator</span>
+                <span className="marquee-separator" />
+                <span>UI/UX Architecture</span>
               </div>
               <div className="marquee-separator" style={{ alignSelf: 'center' }} />
             </React.Fragment>
@@ -370,7 +525,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= SELECTED WORK SECTION ================= */}
+      {/* ================= SELECTED WORK SECTION WITH CATEGORY FILTER ================= */}
       <section 
         id="work" 
         className="portfolio-container" 
@@ -381,168 +536,341 @@ export default function Home() {
           borderBottom: '1px solid var(--border-color)'
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '6rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '2rem', marginBottom: '4rem' }}>
           <div>
-            <span className="section-label">Selected Exhibitions</span>
+            <span className="section-label">01 / PORTFOLIO EXHIBITIONS</span>
             <h2 style={{ fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', marginTop: '0.5rem', textTransform: 'uppercase', letterSpacing: '-0.03em' }}>
-              Design Case Studies
+              Selected Projects
             </h2>
           </div>
-          <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontFamily: 'var(--font-heading)', fontWeight: 600 }}>
-            ({projects.length} PROJECTS)
-          </span>
+
+          {/* Interactive Filter Pills */}
+          <div 
+            style={{ 
+              display: 'flex', 
+              gap: '0.5rem', 
+              backgroundColor: 'var(--bg-secondary)', 
+              padding: '4px', 
+              borderRadius: '30px',
+              border: '1px solid var(--border-color)',
+              flexWrap: 'wrap'
+            }}
+            role="tablist"
+            aria-label="Filter portfolio by discipline"
+          >
+            <button
+              onClick={() => setActiveFilter('all')}
+              role="tab"
+              aria-selected={activeFilter === 'all'}
+              className="clickable"
+              style={{
+                backgroundColor: activeFilter === 'all' ? 'var(--text-primary)' : 'transparent',
+                color: activeFilter === 'all' ? 'var(--bg-primary)' : 'var(--text-primary)',
+                border: 'none',
+                borderRadius: '20px',
+                padding: '8px 16px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                cursor: 'none',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              All Projects ({projects.length})
+            </button>
+
+            <button
+              onClick={() => setActiveFilter('code')}
+              role="tab"
+              aria-selected={activeFilter === 'code'}
+              className="clickable"
+              style={{
+                backgroundColor: activeFilter === 'code' ? 'var(--text-primary)' : 'transparent',
+                color: activeFilter === 'code' ? 'var(--bg-primary)' : 'var(--text-primary)',
+                border: 'none',
+                borderRadius: '20px',
+                padding: '8px 16px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                cursor: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              <Terminal size={14} /> MERN &amp; Code ({projects.filter(p => p.type === 'code').length})
+            </button>
+
+            <button
+              onClick={() => setActiveFilter('design')}
+              role="tab"
+              aria-selected={activeFilter === 'design'}
+              className="clickable"
+              style={{
+                backgroundColor: activeFilter === 'design' ? 'var(--text-primary)' : 'transparent',
+                color: activeFilter === 'design' ? 'var(--bg-primary)' : 'var(--text-primary)',
+                border: 'none',
+                borderRadius: '20px',
+                padding: '8px 16px',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                letterSpacing: '0.04em',
+                cursor: 'none',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                transition: 'all 0.25s ease'
+              }}
+            >
+              <Palette size={14} /> Graphic Design ({projects.filter(p => p.type === 'design').length})
+            </button>
+          </div>
         </div>
 
-        {/* Asymmetrical Staggered Work Grid */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10rem' }}>
-          {projects.map((project, idx) => {
-            const isEven = idx % 2 === 0;
-            const projectNumber = `0${idx + 1}`;
-            return (
-              <motion.article
-                key={project.id}
-                initial={{ opacity: 0, y: 80 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                style={{
-                  position: 'relative'
-                }}
-              >
-                {/* Horizontal Section Line Divider */}
-                <div style={{ width: '100%', height: '1px', backgroundColor: 'var(--border-color)', position: 'absolute', top: '-4rem', left: 0 }} />
+        {/* Dynamic Project Grid */}
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key={activeFilter}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            style={{ display: 'flex', flexDirection: 'column', gap: '8rem' }}
+          >
+            {filteredProjects.map((project, idx) => {
+              const isEven = idx % 2 === 0;
+              const projectNumber = idx < 9 ? `0${idx + 1}` : `${idx + 1}`;
+              const isCodeProject = project.type === 'code';
 
-                <motion.div
-                  variants={projectItemVariants}
-                  initial="initial"
-                  whileHover="hover"
-                  style={{
-                    display: 'grid',
-                    gridTemplateColumns: isEven ? '1.3fr 0.7fr' : '0.7fr 1.3fr',
-                    gap: '5rem',
-                    alignItems: 'center'
-                  }}
+              return (
+                <motion.article
+                  key={project.id}
+                  initial={{ opacity: 0, y: 60 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                  style={{ position: 'relative' }}
                 >
-                  {/* Image Frame (Order shifts based on Index) */}
-                  <div style={{ order: isEven ? 0 : 1, position: 'relative' }}>
-                    {/* Hover Glow Background Gradient */}
-                    <motion.div 
-                      variants={gradientHoverVariants}
-                      style={{
-                        position: 'absolute',
-                        inset: '-15px',
-                        background: idx % 3 === 0 ? 'var(--grad-pale-blue)' : idx % 3 === 1 ? 'var(--grad-soft-pink)' : 'var(--grad-warm-peach)',
-                        borderRadius: '10px',
-                        zIndex: -1,
-                        filter: 'blur(16px)'
-                      }}
-                    />
-                    
-                    <Link to={`/project/${project.id}`} data-cursor="VIEW">
-                      {/* Container aspect ratio matched dynamically to image natural ratios */}
-                      <div 
-                        style={{
-                          overflow: 'hidden',
-                          borderRadius: '4px',
-                          border: '1px solid var(--border-color)',
-                          aspectRatio: getProjectRatio(project.id), // Dynamic Aspect Ratio
-                          backgroundColor: 'var(--bg-secondary)',
-                          position: 'relative'
-                        }}
-                      >
-                        <motion.img 
-                          src={project.coverImage} 
-                          alt={project.title}
-                          loading="lazy" 
-                          style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                            objectPosition: 'center center' // Centered mapping
-                          }}
-                          whileHover={{ scale: 1.04 }}
-                          transition={{ duration: 0.5, ease: 'easeOut' }}
-                        />
-                      </div>
-                    </Link>
-                  </div>
+                  {/* Horizontal Section Line Divider */}
+                  <div style={{ width: '100%', height: '1px', backgroundColor: 'var(--border-color)', position: 'absolute', top: '-4rem', left: 0 }} />
 
-                  {/* Asymmetrical Text Panel details */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', position: 'relative' }}>
-                    
-                    {/* Large Project Numbering */}
-                    <div 
-                      style={{ 
-                        fontFamily: 'var(--font-heading)', 
-                        fontSize: '3rem', 
-                        fontWeight: 300, 
-                        color: 'var(--border-color)',
-                        lineHeight: 1
-                      }}
-                    >
-                      {projectNumber}
-                    </div>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                      <span 
+                  <motion.div
+                    variants={{
+                      initial: {},
+                      hover: {}
+                    }}
+                    initial="initial"
+                    whileHover="hover"
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: isEven ? '1.3fr 0.7fr' : '0.7fr 1.3fr',
+                      gap: '4.5rem',
+                      alignItems: 'center'
+                    }}
+                  >
+                    {/* Image Frame (Order shifts based on Index) */}
+                    <div style={{ order: isEven ? 0 : 1, position: 'relative' }}>
+                      {/* Hover Glow Background Gradient */}
+                      <motion.div 
+                        variants={gradientHoverVariants}
                         style={{
-                          fontSize: '0.75rem',
-                          fontWeight: 700,
-                          letterSpacing: '0.1em',
-                          color: 'var(--text-secondary)',
-                          textTransform: 'uppercase'
+                          position: 'absolute',
+                          inset: '-15px',
+                          background: isCodeProject 
+                            ? 'linear-gradient(135deg, rgba(0, 237, 100, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%)'
+                            : idx % 2 === 0 ? 'var(--grad-pale-blue)' : 'var(--grad-soft-pink)',
+                          borderRadius: '12px',
+                          zIndex: -1,
+                          filter: 'blur(20px)'
                         }}
-                      >
-                        {project.category}
-                      </span>
+                      />
                       
-                      <h3 style={{ fontSize: '2.5rem', textTransform: 'uppercase', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
-                        <Link to={`/project/${project.id}`} className="clickable" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.75rem' }}>
-                          <motion.span variants={titleHoverVariants} style={{ display: 'inline-block' }}>
-                            {project.title}
-                          </motion.span>
-                          <motion.span variants={arrowHoverVariants} style={{ display: 'inline-block' }}>
-                            <ArrowUpRight size={28} />
-                          </motion.span>
-                        </Link>
-                      </h3>
-                    </div>
-
-                    <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', maxWidth: '420px', lineHeight: 1.65 }}>
-                      {project.description}
-                    </p>
-
-                    <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
-                      {project.tools.map((tool) => (
-                        <span
-                          key={tool}
+                      <Link to={`/project/${project.id}`} data-cursor="VIEW">
+                        <div 
                           style={{
-                            fontSize: '0.7rem',
-                            fontWeight: 600,
-                            backgroundColor: 'var(--bg-secondary)',
-                            padding: '4px 10px',
-                            borderRadius: '2px',
+                            overflow: 'hidden',
+                            borderRadius: '6px',
                             border: '1px solid var(--border-color)',
-                            color: 'var(--text-secondary)',
+                            aspectRatio: getProjectRatio(project.id),
+                            backgroundColor: 'var(--bg-secondary)',
+                            position: 'relative'
                           }}
                         >
-                          {tool}
-                        </span>
-                      ))}
+                          <motion.img 
+                            src={project.coverImage} 
+                            alt={project.title}
+                            loading="lazy" 
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover',
+                              objectPosition: 'center center'
+                            }}
+                            whileHover={{ scale: 1.03 }}
+                            transition={{ duration: 0.5, ease: 'easeOut' }}
+                          />
+
+                          {/* Top-right Type badge */}
+                          <div
+                            style={{
+                              position: 'absolute',
+                              top: '1rem',
+                              right: '1rem',
+                              backgroundColor: 'rgba(18, 18, 18, 0.85)',
+                              color: '#FAF9F6',
+                              padding: '5px 12px',
+                              borderRadius: '20px',
+                              fontSize: '0.68rem',
+                              fontWeight: 800,
+                              letterSpacing: '0.08em',
+                              textTransform: 'uppercase',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              backdropFilter: 'blur(8px)',
+                              border: '1px solid rgba(255, 255, 255, 0.15)'
+                            }}
+                          >
+                            {isCodeProject ? (
+                              <><Terminal size={12} color="#00ED64" /> MERN App</>
+                            ) : (
+                              <><Palette size={12} color="#FF7A00" /> Brand Identity</>
+                            )}
+                          </div>
+                        </div>
+                      </Link>
                     </div>
 
-                    <Link to={`/project/${project.id}`} className="btn-editorial" style={{ alignSelf: 'flex-start', marginTop: '1rem' }}>
-                      Explore Case Study <ArrowUpRight size={16} />
-                    </Link>
-                  </div>
-                </motion.div>
-              </motion.article>
-            );
-          })}
-        </div>
+                    {/* Asymmetrical Text Panel details */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem', position: 'relative' }}>
+                      
+                      {/* Large Project Numbering */}
+                      <div 
+                        style={{ 
+                          fontFamily: 'var(--font-heading)', 
+                          fontSize: '3rem', 
+                          fontWeight: 300, 
+                          color: 'var(--border-color)',
+                          lineHeight: 1
+                        }}
+                      >
+                        {projectNumber}
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <span 
+                          style={{
+                            fontSize: '0.75rem',
+                            fontWeight: 700,
+                            letterSpacing: '0.1em',
+                            color: isCodeProject ? '#1976D2' : 'var(--text-secondary)',
+                            textTransform: 'uppercase'
+                          }}
+                        >
+                          {project.category}
+                        </span>
+                        
+                        <h3 style={{ fontSize: 'clamp(1.8rem, 3.2vw, 2.5rem)', textTransform: 'uppercase', letterSpacing: '-0.04em', lineHeight: 1.1 }}>
+                          <Link to={`/project/${project.id}`} className="clickable" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <motion.span variants={titleHoverVariants} style={{ display: 'inline-block' }}>
+                              {project.title}
+                            </motion.span>
+                            <motion.span variants={arrowHoverVariants} style={{ display: 'inline-block' }}>
+                              <ArrowUpRight size={28} />
+                            </motion.span>
+                          </Link>
+                        </h3>
+                      </div>
+
+                      <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', maxWidth: '440px', lineHeight: 1.65 }}>
+                        {project.description}
+                      </p>
+
+                      {/* Tech stack / Tools pills */}
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap' }}>
+                        {project.tools.map((tool) => (
+                          <span
+                            key={tool}
+                            style={{
+                              fontSize: '0.72rem',
+                              fontWeight: 700,
+                              backgroundColor: 'var(--bg-secondary)',
+                              padding: '4px 10px',
+                              borderRadius: '2px',
+                              border: '1px solid var(--border-color)',
+                              color: 'var(--text-primary)',
+                            }}
+                          >
+                            {tool}
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Action buttons */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem', marginTop: '0.75rem', flexWrap: 'wrap' }}>
+                        <Link to={`/project/${project.id}`} className="btn-editorial">
+                          Case Study <ArrowUpRight size={16} />
+                        </Link>
+
+                        {project.liveDemo && (
+                          <a 
+                            href={project.liveDemo} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="clickable"
+                            style={{ 
+                              display: 'inline-flex', 
+                              alignItems: 'center', 
+                              gap: '6px',
+                              fontSize: '0.82rem',
+                              fontWeight: 700,
+                              color: 'var(--text-primary)',
+                              padding: '6px 14px',
+                              border: '1px solid var(--border-color)',
+                              borderRadius: '2px',
+                              backgroundColor: 'var(--bg-secondary)',
+                              transition: 'all 0.2s ease'
+                            }}
+                          >
+                            <ExternalLink size={13} /> Live Site
+                          </a>
+                        )}
+
+                        {isCodeProject && project.github && (
+                          <a 
+                            href={project.github} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="clickable"
+                            style={{ 
+                              display: 'inline-flex', 
+                              alignItems: 'center', 
+                              gap: '6px',
+                              fontSize: '0.82rem',
+                              fontWeight: 700,
+                              color: 'var(--text-secondary)',
+                              padding: '6px 12px',
+                              border: '1px solid var(--border-color)',
+                              borderRadius: '2px',
+                              backgroundColor: 'var(--bg-primary)'
+                            }}
+                          >
+                            <GithubIcon size={14} /> Code
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                </motion.article>
+              );
+            })}
+          </motion.div>
+        </AnimatePresence>
       </section>
 
-      {/* ================= EXPERIENCE SECTION ================= */}
+      {/* ================= EXPERIENCE & TIMELINE SECTION ================= */}
       <section 
         id="experience" 
         className="portfolio-container" 
@@ -555,17 +883,19 @@ export default function Home() {
         <div className="asymmetrical-grid">
           {/* Left Column: Title and vertical timeline track */}
           <div style={{ position: 'relative' }}>
-            <span className="section-label">02 / HISTORY</span>
+            <span className="section-label">02 / CAREER TRAJECTORY</span>
             <h2 style={{ fontSize: '2.5rem', marginTop: '0.5rem', textTransform: 'uppercase', marginBottom: '2rem', fontFamily: 'var(--font-heading)' }}>
               Work Timeline
             </h2>
+            <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', maxWidth: '360px', lineHeight: 1.7, marginBottom: '2rem' }}>
+              Hands-on experience delivering full-stack web applications and visual brand campaigns for agile agencies, startups, and private clients.
+            </p>
             
-            {/* Fine architectural line grid */}
-            <div className="fine-line fine-line-vert" style={{ left: '0', top: '7.5rem', height: 'calc(100% - 6rem)' }} />
+            <div className="fine-line fine-line-vert" style={{ left: '0', top: '9.5rem', height: 'calc(100% - 8rem)' }} />
           </div>
 
           {/* Right Column: Modern Vertical Editorial Timeline */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem' }}>
             {personalInfo.experience.map((exp, index) => (
               <motion.div 
                 key={index}
@@ -576,7 +906,7 @@ export default function Home() {
                 style={{ 
                   display: 'flex', 
                   flexDirection: 'column', 
-                  gap: '1.5rem',
+                  gap: '1.25rem',
                   position: 'relative',
                   paddingLeft: '2.5rem'
                 }}
@@ -598,7 +928,7 @@ export default function Home() {
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
                   <div>
-                    <h3 style={{ fontSize: '1.5rem', textTransform: 'uppercase', letterSpacing: '-0.02em', lineHeight: 1.1 }}>{exp.role}</h3>
+                    <h3 style={{ fontSize: '1.45rem', textTransform: 'uppercase', letterSpacing: '-0.02em', lineHeight: 1.15 }}>{exp.role}</h3>
                     <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-secondary)', marginTop: '0.2rem' }}>
                       {exp.company}
                     </h4>
@@ -618,7 +948,6 @@ export default function Home() {
                   </span>
                 </div>
 
-                {/* CV-supported Experience Details */}
                 <ul style={{ listStyleType: 'none', display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                   {exp.bullets.map((bullet, idx) => (
                     <li 
@@ -631,7 +960,7 @@ export default function Home() {
                         lineHeight: 1.6
                       }}
                     >
-                      <span style={{ position: 'absolute', left: 0, top: '8px', width: '4px', height: '4px', backgroundColor: 'var(--text-primary)', borderRadius: '50%' }} />
+                      <span style={{ position: 'absolute', left: 0, top: '9px', width: '5px', height: '5px', backgroundColor: 'var(--text-primary)', borderRadius: '50%' }} />
                       {bullet}
                     </li>
                   ))}
@@ -642,7 +971,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= ABOUT & SKILLS SECTION ================= */}
+      {/* ================= ABOUT & DUAL-SKILL MATRIX SECTION ================= */}
       <section 
         id="about" 
         className="portfolio-container" 
@@ -653,7 +982,8 @@ export default function Home() {
         }}
       >
         <div className="asymmetrical-grid">
-          {/* Left Column: Editorial biography & Portrait */}
+          
+          {/* Left Column: Editorial Biography & Dual Matrix Overview */}
           <motion.div 
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -662,28 +992,29 @@ export default function Home() {
             style={{ display: 'flex', flexDirection: 'column', gap: '3rem' }}
           >
             <div>
-              <span className="section-label">03 / CREATOR</span>
+              <span className="section-label">03 / CREATOR &amp; ENGINEER</span>
               <h2 style={{ fontSize: '2.5rem', marginTop: '0.5rem', textTransform: 'uppercase', marginBottom: '1.5rem', fontFamily: 'var(--font-heading)' }}>
                 About Nihal PM
               </h2>
               
-              {/* Refactored Bio */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 <p style={{ fontSize: '1.2rem', color: 'var(--text-primary)', lineHeight: 1.6, fontWeight: 500 }}>
-                  A dedicated Graphic Designer with a comprehensive background in layout composition, visual packaging, and digital branding solutions.
+                  A multidisciplinary MERN Stack Developer and Graphic Designer driven by clean architecture and striking visual aesthetics.
                 </p>
                 <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-                  With hands-on experience in visual design for e-commerce, digital marketing, sports campaigns, and real estate, my focus is delivering cohesive, polished assets. Experienced working in agile environments to build and preserve brand integrity.
+                  {personalInfo.aboutMe}
+                </p>
+                <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: 1.7 }}>
+                  Understanding both full-stack engineering logic and design principles enables me to write cleaner, more maintainable code that directly honors the design system — turning design mockups into responsive, high-performance web applications without friction.
                 </p>
               </div>
             </div>
 
-            {/* Asymmetrical Portrait Image - adjusted to 1:1 ratio to prevent head/face cropping */}
+            {/* Asymmetrical Portrait Image */}
             <div 
               style={{
                 width: '100%',
-                maxHeight: '400px', // Increased maxHeight to match square shape
-                aspectRatio: '1/1', // Adjusted to 1/1 square
+                aspectRatio: '1/1',
                 overflow: 'hidden',
                 borderRadius: '4px',
                 border: '1px solid var(--border-color)',
@@ -692,7 +1023,7 @@ export default function Home() {
             >
               <img 
                 src={personalInfo.heroImage} 
-                alt="Graphic Design Portfolio Visual Work"
+                alt="Nihal PM Studio Showcase"
                 loading="lazy" 
                 style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center' }}
               />
@@ -702,23 +1033,26 @@ export default function Home() {
                   bottom: '1rem',
                   right: '1rem',
                   backgroundColor: 'var(--bg-primary)',
-                  padding: '4px 10px',
+                  padding: '6px 12px',
                   borderRadius: '1px',
                   border: '1px solid var(--border-color)',
-                  fontSize: '0.65rem',
-                  fontWeight: 700,
+                  fontSize: '0.68rem',
+                  fontWeight: 800,
                   textTransform: 'uppercase',
-                  letterSpacing: '0.05em'
+                  letterSpacing: '0.08em',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
                 }}
               >
-                Visual Art Showcase
+                <Sparkles size={12} /> Full-Stack &amp; Design Practice
               </div>
             </div>
 
             {/* Languages */}
             <div>
               <h3 style={{ fontSize: '1.1rem', textTransform: 'uppercase', marginBottom: '1rem', letterSpacing: '0.05em' }}>Languages</h3>
-              <div style={{ display: 'flex', gap: '2rem' }}>
+              <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
                 {personalInfo.languages.map((lang) => (
                   <div key={lang} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                     <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--text-primary)' }} />
@@ -727,54 +1061,223 @@ export default function Home() {
                 ))}
               </div>
             </div>
+          </motion.div>
 
-            {/* Interactive Typographic Skills */}
+          {/* Right Column: Interactive Dual Skills Showcase & Code Preview */}
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            style={{ display: 'flex', flexDirection: 'column', gap: '3.5rem', paddingLeft: '1rem' }}
+          >
+            {/* Section 1: MERN Stack Skills */}
             <div>
-              <h3 style={{ fontSize: '1.1rem', textTransform: 'uppercase', marginBottom: '1.5rem', letterSpacing: '0.05em' }}>Core Expertises</h3>
-              <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }} role="list" aria-label="Skills cloud list">
-                {personalInfo.skills.map((skill) => (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                <Terminal size={22} aria-hidden="true" style={{ color: '#00ED64' }} />
+                <h3 style={{ fontSize: '1.45rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>
+                  MERN &amp; Coding Stack
+                </h3>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+                {personalInfo.mernSkills.map((skill) => (
                   <motion.div
-                    key={skill}
+                    key={skill.name}
                     variants={skillItemVariants}
                     initial="initial"
                     whileHover="hover"
-                    role="listitem"
                     style={{
-                      fontSize: '0.9rem',
+                      fontSize: '0.85rem',
                       fontWeight: 700,
-                      padding: '8px 18px',
+                      padding: '8px 14px',
                       borderRadius: '2px',
-                      border: '1px solid',
+                      border: '1px solid var(--border-color)',
                       cursor: 'none',
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '8px'
                     }}
                   >
-                    <span>{skill}</span>
-                    <ArrowUpRight size={14} aria-hidden="true" />
+                    <span>{skill.name}</span>
+                    <span style={{ fontSize: '0.65rem', opacity: 0.6, textTransform: 'uppercase' }}>{skill.category}</span>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Interactive Code Preview Box */}
+              <div 
+                style={{
+                  backgroundColor: '#111216',
+                  borderRadius: '6px',
+                  border: '1px solid #23262F',
+                  overflow: 'hidden',
+                  boxShadow: '0 15px 35px rgba(0,0,0,0.1)'
+                }}
+              >
+                {/* Window header */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 16px', borderBottom: '1px solid #23262F', backgroundColor: '#181A20' }}>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#FF5F56' }} />
+                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#FFBD2E' }} />
+                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#27C93F' }} />
+                  </div>
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button 
+                      onClick={() => setActiveCodeTab('api')}
+                      style={{
+                        background: activeCodeTab === 'api' ? '#23262F' : 'transparent',
+                        border: 'none',
+                        color: activeCodeTab === 'api' ? '#FAF9F6' : '#8A8F98',
+                        padding: '4px 10px',
+                        borderRadius: '3px',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        cursor: 'none'
+                      }}
+                    >
+                      server.js (Express + Mongoose)
+                    </button>
+                    <button 
+                      onClick={() => setActiveCodeTab('component')}
+                      style={{
+                        background: activeCodeTab === 'component' ? '#23262F' : 'transparent',
+                        border: 'none',
+                        color: activeCodeTab === 'component' ? '#FAF9F6' : '#8A8F98',
+                        padding: '4px 10px',
+                        borderRadius: '3px',
+                        fontSize: '0.72rem',
+                        fontWeight: 700,
+                        cursor: 'none'
+                      }}
+                    >
+                      ProductCard.jsx (React)
+                    </button>
+                  </div>
+                </div>
+
+                {/* Code body */}
+                <div style={{ padding: '1.25rem', fontFamily: 'monospace', fontSize: '0.85rem', lineHeight: 1.6, color: '#E1E4EA', overflowX: 'auto' }}>
+                  <pre style={{ margin: 0 }}>
+                    <code>
+                      {activeCodeTab === 'api' 
+                        ? `// Express.js & Mongoose REST API Controller
+const express = require('express');
+const router = express.Router();
+const Product = require('../models/Product');
+
+// GET /api/products - Query catalog with projection
+router.get('/', async (req, res) => {
+  try {
+    const items = await Product.find({ inStock: true })
+      .select('title price category stock thumbnail')
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, count: items.length, items });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve catalog' });
+  }
+});
+
+module.exports = router;`
+                        : `// React 19 Component with Cart Management
+import React from 'react';
+
+export default function ProductCard({ product, onAddToCart, isSaved }) {
+  return (
+    <div className="product-card">
+      <img src={product.thumbnail} alt={product.title} />
+      <h3>{product.title}</h3>
+      <p className="price">\${product.price.toFixed(2)}</p>
+      <button 
+        onClick={() => onAddToCart(product.id)}
+        className={isSaved ? 'btn-active' : 'btn-default'}
+      >
+        {isSaved ? 'In Cart' : 'Add To Cart'}
+      </button>
+    </div>
+  );
+}`}
+                    </code>
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            {/* Section 2: Graphic & UI Design Skills */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                <Palette size={22} aria-hidden="true" style={{ color: '#FF7A00' }} />
+                <h3 style={{ fontSize: '1.45rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>
+                  Graphic &amp; Visual Design
+                </h3>
+              </div>
+
+              <div style={{ display: 'flex', gap: '0.65rem', flexWrap: 'wrap' }}>
+                {personalInfo.designSkills.map((skill) => (
+                  <motion.div
+                    key={skill.name}
+                    variants={skillItemVariants}
+                    initial="initial"
+                    whileHover="hover"
+                    style={{
+                      fontSize: '0.85rem',
+                      fontWeight: 700,
+                      padding: '8px 14px',
+                      borderRadius: '2px',
+                      border: '1px solid var(--border-color)',
+                      cursor: 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <span>{skill.name}</span>
+                    <span style={{ fontSize: '0.65rem', opacity: 0.6, textTransform: 'uppercase' }}>{skill.category}</span>
                   </motion.div>
                 ))}
               </div>
             </div>
-          </motion.div>
 
-          {/* Right Column: Education & Certifications */}
-          <motion.div 
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.1 }}
-            style={{ display: 'flex', flexDirection: 'column', gap: '4.5rem', paddingLeft: '2rem' }}
-          >
-            {/* Education Sub-section */}
+            {/* Section 3: Certifications */}
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
-                <BookOpen size={20} aria-hidden="true" />
-                <h3 style={{ fontSize: '1.5rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Education</h3>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                <Award size={22} aria-hidden="true" />
+                <h3 style={{ fontSize: '1.45rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>
+                  Credentials &amp; Certifications
+                </h3>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {personalInfo.certifications.map((cert, idx) => (
+                  <div 
+                    key={idx} 
+                    style={{ 
+                      display: 'flex', 
+                      gap: '0.75rem', 
+                      alignItems: 'center',
+                      backgroundColor: 'var(--bg-secondary)',
+                      padding: '1rem',
+                      borderRadius: '2px',
+                      border: '1px solid var(--border-color)'
+                    }}
+                  >
+                    <CheckCircle2 size={18} style={{ color: '#2E7D32', flexShrink: 0 }} aria-hidden="true" />
+                    <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--text-primary)' }}>{cert}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Section 4: Education */}
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                <BookOpen size={22} aria-hidden="true" />
+                <h3 style={{ fontSize: '1.45rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>
+                  Education
+                </h3>
               </div>
               
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 {personalInfo.education.map((edu, idx) => (
                   <div key={idx} style={{ position: 'relative', borderLeft: '2px solid var(--border-color)', paddingLeft: '1.5rem' }}>
                     <div style={{ position: 'absolute', left: '-6px', top: '4px', width: '10px', height: '10px', backgroundColor: 'var(--text-primary)', borderRadius: '50%' }} />
@@ -787,33 +1290,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Certifications Sub-section */}
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2rem' }}>
-                <Award size={20} aria-hidden="true" />
-                <h3 style={{ fontSize: '1.5rem', textTransform: 'uppercase', fontFamily: 'var(--font-heading)' }}>Certifications</h3>
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {personalInfo.certifications.map((cert, idx) => (
-                  <div 
-                    key={idx} 
-                    style={{ 
-                      display: 'flex', 
-                      gap: '0.75rem', 
-                      alignItems: 'flex-start',
-                      backgroundColor: 'var(--bg-secondary)',
-                      padding: '1rem',
-                      borderRadius: '2px',
-                      border: '1px solid var(--border-color)'
-                    }}
-                  >
-                    <Award size={18} style={{ color: 'var(--text-secondary)', marginTop: '2px', flexShrink: 0 }} aria-hidden="true" />
-                    <span style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-primary)' }}>{cert}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
           </motion.div>
         </div>
       </section>
@@ -836,28 +1312,38 @@ export default function Home() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className="section-label">04 / DIALOGUE</span>
-            <h2 style={{ fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', marginTop: '0.5rem', textTransform: 'uppercase', marginBottom: '2rem', lineHeight: 1.1, letterSpacing: '-0.04em' }}>
-              Let's create<br />something meaningful.
+            <span className="section-label">04 / COLLABORATION</span>
+            <h2 style={{ fontSize: 'clamp(2rem, 4.5vw, 3.2rem)', marginTop: '0.5rem', textTransform: 'uppercase', marginBottom: '1.5rem', lineHeight: 1.1, letterSpacing: '-0.04em' }}>
+              Let's engineer &amp;<br />design together.
             </h2>
+            <p style={{ fontSize: '1.05rem', color: 'var(--text-secondary)', lineHeight: 1.7, maxWidth: '440px' }}>
+              Whether you need a full-stack MERN application built from scratch, clean RESTful backend APIs, or high-impact brand design collaterals, I'm ready to bring your vision to life.
+            </p>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '3.5rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '3rem' }}>
               <a href={`mailto:${personalInfo.email}`} className="clickable" style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.1rem', fontWeight: 600 }} aria-label={`Email Nihal at ${personalInfo.email}`}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '50%', border: '1px solid var(--border-color)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '42px', height: '42px', borderRadius: '50%', border: '1px solid var(--border-color)' }}>
                   <Mail size={18} aria-hidden="true" />
                 </div>
                 <span>{personalInfo.email}</span>
               </a>
 
               <a href={`tel:${personalInfo.phone.replace(/ /g, '')}`} className="clickable" style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.1rem', fontWeight: 600 }} aria-label={`Call Nihal at ${personalInfo.phone}`}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '50%', border: '1px solid var(--border-color)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '42px', height: '42px', borderRadius: '50%', border: '1px solid var(--border-color)' }}>
                   <Phone size={18} aria-hidden="true" />
                 </div>
                 <span>{personalInfo.phone}</span>
               </a>
 
+              <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="clickable" style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.1rem', fontWeight: 600 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '42px', height: '42px', borderRadius: '50%', border: '1px solid var(--border-color)' }}>
+                  <GithubIcon size={18} aria-hidden="true" />
+                </div>
+                <span>github.com/Nihalpm123</span>
+              </a>
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '1.1rem', fontWeight: 600 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '40px', height: '40px', borderRadius: '50%', border: '1px solid var(--border-color)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '42px', height: '42px', borderRadius: '50%', border: '1px solid var(--border-color)' }}>
                   <MapPin size={18} aria-hidden="true" />
                 </div>
                 <span>{personalInfo.location}</span>
@@ -865,7 +1351,7 @@ export default function Home() {
             </div>
           </motion.div>
 
-          {/* Right Column: Contact Form with select-pills & mailto redirect */}
+          {/* Right Column: Contact Form */}
           <motion.div 
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -881,7 +1367,7 @@ export default function Home() {
               gap: '2rem'
             }}
           >
-            <h3 style={{ fontSize: '1.25rem', textTransform: 'uppercase', letterSpacing: '-0.02em' }}>Send a Message</h3>
+            <h3 style={{ fontSize: '1.35rem', textTransform: 'uppercase', letterSpacing: '-0.02em' }}>Send a Message</h3>
             
             <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} onSubmit={handleContactSubmit}>
               
@@ -898,7 +1384,7 @@ export default function Home() {
                   style={{
                     backgroundColor: 'var(--bg-primary)',
                     border: '1px solid var(--border-color)',
-                    padding: '0.8rem 1rem',
+                    padding: '0.85rem 1rem',
                     borderRadius: '2px',
                     fontFamily: 'var(--font-body)',
                     fontSize: '0.95rem'
@@ -913,13 +1399,13 @@ export default function Home() {
                   id="form-email"
                   type="email" 
                   required
-                  placeholder="name@company.com"
+                  placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   style={{
                     backgroundColor: 'var(--bg-primary)',
                     border: '1px solid var(--border-color)',
-                    padding: '0.8rem 1rem',
+                    padding: '0.85rem 1rem',
                     borderRadius: '2px',
                     fontFamily: 'var(--font-body)',
                     fontSize: '0.95rem'
@@ -929,7 +1415,7 @@ export default function Home() {
 
               {/* Project Type selector pills */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Project Type</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)' }}>Inquiry Scope</span>
                 <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }} role="group" aria-label="Select inquiry project type">
                   {projectTypes.map((type) => {
                     const isSelected = projectType === type;
@@ -943,12 +1429,12 @@ export default function Home() {
                           backgroundColor: isSelected ? 'var(--text-primary)' : 'var(--bg-primary)',
                           color: isSelected ? 'var(--bg-primary)' : 'var(--text-primary)',
                           border: isSelected ? '1px solid var(--text-primary)' : '1px solid var(--border-color)',
-                          padding: '6px 12px',
+                          padding: '6px 14px',
                           borderRadius: '20px',
                           fontSize: '0.75rem',
                           fontWeight: 700,
                           cursor: 'none',
-                          transition: 'background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease'
+                          transition: 'all 0.2s ease'
                         }}
                         className="clickable"
                       >
@@ -966,13 +1452,13 @@ export default function Home() {
                   id="form-message"
                   rows={4}
                   required
-                  placeholder="Describe your design project requirements..."
+                  placeholder="Share details regarding your web application, coding requirement, or design project..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   style={{
                     backgroundColor: 'var(--bg-primary)',
                     border: '1px solid var(--border-color)',
-                    padding: '0.8rem 1rem',
+                    padding: '0.85rem 1rem',
                     borderRadius: '2px',
                     fontFamily: 'var(--font-body)',
                     fontSize: '0.95rem',
@@ -991,7 +1477,7 @@ export default function Home() {
                   backgroundColor: submitted ? '#4CAF50' : 'var(--text-primary)',
                   color: 'var(--bg-primary)',
                   border: 'none',
-                  padding: '1rem',
+                  padding: '1.1rem',
                   fontFamily: 'var(--font-heading)',
                   fontSize: '1rem',
                   fontWeight: 800,
@@ -1017,7 +1503,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= PREMIUM MINIMAL FOOTER ================= */}
+      {/* ================= EDITORIAL FOOTER ================= */}
       <footer 
         className="portfolio-container"
         style={{ 
@@ -1032,19 +1518,19 @@ export default function Home() {
         <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '3rem' }}>
           
           {/* Logo brand & closing statement */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '300px' }}>
-            <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.04em' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '340px' }}>
+            <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.6rem', fontWeight: 800, letterSpacing: '-0.04em' }}>
               NIHAL PM
             </h4>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-              Graphic Designer & Visual Artist.
+            <p style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+              MERN Stack Developer &amp; Graphic Designer.
             </p>
-            <p style={{ fontSize: '0.8rem', fontStyle: 'italic', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>
-              "Creativity Never Stops."
+            <p style={{ fontSize: '0.85rem', fontStyle: 'italic', color: 'var(--text-secondary)' }}>
+              "Engineering resilient code while honoring high-impact visual design."
             </p>
           </div>
 
-          {/* Quick links loops */}
+          {/* Quick links */}
           <div style={{ display: 'flex', gap: '5rem', flexWrap: 'wrap' }}>
             {/* Sitemap Navigation */}
             <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }} aria-label="Footer navigation">
@@ -1052,37 +1538,28 @@ export default function Home() {
                 Navigation
               </span>
               <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{ background: 'none', border: 'none', textTransform: 'uppercase', textAlign: 'left', fontSize: '0.85rem', fontWeight: 600 }} className="clickable">Home</button>
-              <button onClick={() => document.getElementById('about').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', textTransform: 'uppercase', textAlign: 'left', fontSize: '0.85rem', fontWeight: 600 }} className="clickable">About</button>
               <button onClick={() => document.getElementById('work').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', textTransform: 'uppercase', textAlign: 'left', fontSize: '0.85rem', fontWeight: 600 }} className="clickable">Work</button>
               <button onClick={() => document.getElementById('experience').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', textTransform: 'uppercase', textAlign: 'left', fontSize: '0.85rem', fontWeight: 600 }} className="clickable">Experience</button>
+              <button onClick={() => document.getElementById('about').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', textTransform: 'uppercase', textAlign: 'left', fontSize: '0.85rem', fontWeight: 600 }} className="clickable">About &amp; Skills</button>
               <button onClick={() => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })} style={{ background: 'none', border: 'none', textTransform: 'uppercase', textAlign: 'left', fontSize: '0.85rem', fontWeight: 600 }} className="clickable">Contact</button>
             </nav>
 
-            {/* Clickable social items */}
+            {/* Social connections */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <span style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-secondary)', letterSpacing: '0.05em' }}>
-                Social Connections
+                Connect Online
               </span>
+              <a href={socialLinks.github} target="_blank" rel="noopener noreferrer" className="clickable" style={{ fontSize: '0.85rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                GitHub <ArrowUpRight size={12} aria-hidden="true" />
+              </a>
+              <a href={socialLinks.linkedin} target="_blank" rel="noopener noreferrer" className="clickable" style={{ fontSize: '0.85rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                LinkedIn <ArrowUpRight size={12} aria-hidden="true" />
+              </a>
               <a href={socialLinks.whatsapp} target="_blank" rel="noopener noreferrer" className="clickable" style={{ fontSize: '0.85rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                 WhatsApp <ArrowUpRight size={12} aria-hidden="true" />
               </a>
-              <a 
-                href={socialLinks.instagram || '#'} 
-                target={socialLinks.instagram ? "_blank" : undefined} 
-                rel={socialLinks.instagram ? "noopener noreferrer" : undefined} 
-                className="clickable" 
-                style={{ fontSize: '0.85rem', fontWeight: 700, opacity: socialLinks.instagram ? 1 : 0.4 }}
-              >
-                Instagram
-              </a>
-              <a 
-                href={socialLinks.linkedin || '#'} 
-                target={socialLinks.linkedin ? "_blank" : undefined} 
-                rel={socialLinks.linkedin ? "noopener noreferrer" : undefined} 
-                className="clickable" 
-                style={{ fontSize: '0.85rem', fontWeight: 700, opacity: socialLinks.linkedin ? 1 : 0.4 }}
-              >
-                LinkedIn
+              <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="clickable" style={{ fontSize: '0.85rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                Instagram <ArrowUpRight size={12} aria-hidden="true" />
               </a>
             </div>
           </div>
@@ -1091,7 +1568,7 @@ export default function Home() {
         {/* Closing Copyright bar */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '2rem' }}>
           <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-            &copy; {new Date().getFullYear()} NIHAL PM. All rights reserved. Fact-Checked Profile.
+            &copy; {new Date().getFullYear()} NIHAL PM. MERN Stack Developer &amp; Graphic Designer.
           </span>
           <a href={`mailto:${personalInfo.email}`} className="clickable" style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }} aria-label={`Email Nihal PM at ${personalInfo.email}`}>
             {personalInfo.email}
@@ -1099,13 +1576,8 @@ export default function Home() {
         </div>
       </footer>
       
-      {/* Dynamic pulse keyframe and layouts styles */}
+      {/* Keyframe and layout styles */}
       <style>{`
-        @keyframes pulse {
-          0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.5); }
-          70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(76, 175, 80, 0); }
-          100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
-        }
         @media (max-width: 900px) {
           .asymmetrical-grid {
             grid-template-columns: 1fr !important;
